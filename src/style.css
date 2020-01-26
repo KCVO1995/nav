@@ -31,69 +31,162 @@ img {
 /* style */
 body {
   background: #ffffff;
+  overflow: hidden;
 }
 
-.globalLogo {
-  width: 200px;
-  height: 150px;
-  margin: 0 auto;
-  margin-top: 25px;
-}
-
-@media (min-width: 500px) {
-  .globalLogo {
-    width: 320px;
-    height: 240px;
-    margin-top: 100px;
-  }
-}
-
-.globalHeader {
-  margin: 20px;
-}
-
-@media (min-width: 500px) {
-  .globalHeader {
-    margin: 50px 0 100px 0;
-  }
-}
-
-.searchForm {
+nav {
+  min-width: 100vw;
+  height: 50px;
   display: flex;
   justify-content: space-between;
 }
+nav > h1{
+  font-family: 'Segoe Print';
+  line-height: 50px;
+  font-size: 28px;
+  padding-left: 30px;
+}
+nav > .sign {
+  padding-right: 30px;
+  line-height: 50px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+nav > .sign a:hover {
+  color: #0282b9;
+  cursor: pointer;
+}
+nav > .sign > .signLogo {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+nav > .sign > .signLogo > .icon{
+  width: 20px;
+  height: 20px;
+}
 
+
+.globalLogo {
+  width: 300px;
+  margin: 0 auto;
+}
 @media (min-width: 500px) {
-  .searchForm {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+  .globalLogo {
+    width: 500px;
+  }
+}
+@keyframes logoRotate {
+    0%{
+      transform: rotateY(0deg)
+    }
+    50% {
+      transform: rotateY(180deg)
+    }
+    100% {
+      transform: rotateY(360deg)
+    }
+}   
+
+.globalLogo:hover {
+  animation: logoRotate 2s linear;
+}
+
+
+
+.globalHeader {
+  margin: 0 20px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  background-clip: padding-box,
+  border-box;
+  background-origin:padding-box,
+  border-box;
+  background-image:linear-gradient(180deg, #000, #000),
+  linear-gradient(180deg, rgb(216, 46, 118), rgb(8, 105, 175));
+  border: 6px transparent solid;
+  border-radius: 3px;
+  position: relative;
+}
+@media (min-width: 500px) {
+  .globalHeader {
+    margin: 20px auto 60px auto;
+    max-width: 700px;
+  }
+}
+.globalHeader > .choiceBtn {
+  height: 40px;
+  background-color: #fff;
+}
+.globalHeader > .choiceBtn > img {
+  margin-top: 7px;
+}
+
+.globalHeader > .bigBox {
+  position: absolute;
+  width: 80px;
+  top: 50px;
+  z-index: 1;
+  display: none;
+}
+@media (min-width: 500px) {
+  .globalHeader>.bigBox {
+    width: 95px;
   }
 }
 
-.searchForm > input {
+.globalHeader > .searchForm {
+  width: 100%;
+  display: flex;
+}
+.globalHeader > .searchForm > input {
   width: 100%;
   height: 40px;
-  margin-right: 20px;
   padding: 0 10px;
-  border: 1px solid #dddddd;
-  border-radius: 4px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+}
+.globalHeader >.searchForm > button {
+  white-space: nowrap;
+  border: none;
+  background-color: #fff;
+  width: 50px;
+  outline: none;
+}
+.globalHeader >.searchForm > button >.icon {
+  width: 30px;
+  height: 30px;
 }
 
-.searchForm > button {
-  white-space: nowrap;
-  padding: 0 28px;
-  border: none;
-  border-radius: 4px;
-  background: #0282b9;
-  color: #fff;
-  font-size: 16px;
-}
+
 
 .globalMain {
   max-width: 900px;
+  margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
+}
+@keyframes out {
+  from{
+    transform: translateY(0);
+  }to{
+    transform: translateY(500%);
+  }
+}
+@keyframes in {
+  from{
+    transform: translateY(500%);
+  }to{
+    transform: translateY(0);
+  }
+}
+.globalMain.out {
+  animation: out 0.5s linear forwards;
+}
+.globalMain.in{
+  animation: in 0.5s linear forwards;
 }
 
 .siteList {
@@ -128,10 +221,16 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  background-clip: padding-box,
+  border-box;
+  background-origin:padding-box,
+  border-box;
+  background-image:linear-gradient(180deg, #fff, #fff),
+  linear-gradient(180deg, rgb(216, 46, 118), rgb(8, 105, 175));
+  border: 6px transparent solid;
+  border-radius: 3px;
   padding: 20px 0;
+  font-family: 'Segoe Print';
 }
 
 .siteList .site > .logo {
@@ -167,10 +266,16 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  background-clip: padding-box,
+  border-box;
+  background-origin:padding-box,
+  border-box;
+  background-image:linear-gradient(180deg, #fff, #fff),
+  linear-gradient(180deg, rgb(216, 46, 118), rgb(8, 105, 175));
+  border: 6px transparent solid;
+  border-radius: 3px;
   padding: 20px 0;
+  font-family: 'Segoe Print';
 }
 
 .siteList .addButton .icon {

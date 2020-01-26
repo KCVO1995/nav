@@ -117,172 +117,74 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"main.js":[function(require,module,exports) {
-var $siteList = $('.siteList');
-var $lastLi = $siteList.find('li.last');
-var storage = localStorage.getItem('storage');
-var storageObject = JSON.parse(storage);
-var $input = $('input');
-var $choiceBtn = $('.choiceBtn');
-var $bigBox = $('.bigBox');
-var $smallBox = $(".smallBox");
-var $form = $('.searchForm');
-var $globalMain = $('.globalMain');
-var body = document.getElementsByTagName('body')[0];
-console.log(body);
-var hashMap = storageObject || [{
-  logo: 'a',
-  url: "https://www.acfun.cn"
-}, {
-  logo: 'b',
-  url: "https://www.baidu.com"
-}];
+})({"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-var simplifyUrl = function simplifyUrl(url) {
-  return url.replace("https://", "").replace("http://", "").replace("www.", "").replace(/\/.*/, ''); // 删除 / 后面的内容
-};
-
-var render = function render() {
-  $siteList.find('li:not(.last)').remove();
-  hashMap.forEach(function (node, index) {
-    var $li = $("\n        <li> \n            <div class=\"close\">\n                <svg class=\"icon\">\n                    <use xlink:href=\"#icon-close\"></use>\n                </svg>\n            </div>              \n                <a href= \"".concat(node.url, "\" >\n                        <div class=\"site\">\n                            <div class=\"logo\">").concat(node.logo, "</div>\n                            <div class=\"link\">").concat(simplifyUrl(node.url), "</div>    \n                        </div>\n                </a>\n        </li>")).insertBefore($lastLi);
-    $li.on('click', '.close', function (e) {
-      hashMap.splice(index, 1);
-      render();
-    });
-  });
-};
-
-render();
-$('.addButton').on('click', function () {
-  var url = prompt('请问你要添加我网址是啥');
-  console.log(url);
-
-  if (url === '') {
-    alert("请输入正确的网站");
-    return null;
-  } else if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) {
-    url = 'https://' + url;
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
   }
 
-  console.log(url);
-  hashMap.push({
-    logo: simplifyUrl(url)[0],
-    url: url
-  });
-  render();
-});
+  return bundleURL;
+}
 
-window.onbeforeunload = function () {
-  var string = JSON.stringify(hashMap);
-  localStorage.setItem('storage', string);
-};
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
 
-$(document).on('keypress', function (e) {
-  var key = e.key;
-  console.log(key);
-  hashMap.forEach(function (node) {
-    if (node.logo === key) {
-      window.open(node.url);
+    if (matches) {
+      return getBaseURL(matches[0]);
     }
-  });
-}); // 阻止input框的冒泡
-
-$input.on('keypress', function (e) {
-  e.stopPropagation();
-}); // 切换搜索引擎
-
-$(document).ready(function () {
-  var searchTypes = [{
-    name: 'wd',
-    action: 'https://www.baidu.com/s',
-    img: 'baidu.705500cf.png',
-    type: 'baidu'
-  }, {
-    name: 'q',
-    action: 'https://www.google.com/search',
-    img: 'google.953ec577.png',
-    type: 'google'
-  }, {
-    name: 'q',
-    action: 'https://cn.bing.com/search',
-    img: 'bing.4d496f25.png',
-    type: 'bing'
-  }, {
-    name: 'query',
-    action: 'https://www.sogou.com/web',
-    img: 'sougou.698e3fe0.png',
-    type: 'sougou'
-  }]; // 点击切换出现隐藏框
-
-  $choiceBtn.on('click', function () {
-    $bigBox.css({
-      "display": "block",
-      height: 0
-    });
-    $bigBox.animate({
-      height: $smallBox.height() * $smallBox.length
-    }, 300);
-  }); // 箭头函数没this，被坑了好久
-
-  $smallBox.click(function fn() {
-    $form.attr("action", searchTypes[$(this).index()].action);
-    $input.attr('name', searchTypes[$(this).index()].name);
-    $choiceBtn.find('img').attr('src', searchTypes[$(this).index()].img);
-    $bigBox.animate({
-      height: 0
-    }, 300, function () {
-      $bigBox.css({
-        "display": "none",
-        height: 0
-      });
-    });
-  });
-});
-$bigBox.mouseleave(function () {
-  $bigBox.animate({
-    height: 0
-  }, 300, function () {
-    $bigBox.css({
-      "display": "none",
-      height: 0
-    });
-  });
-}); // siteList 下划隐藏
-
-function onMouseWheel(e) {
-  /*当鼠标滚轮事件发生时，执行一些操作*/
-  var down = true; // 定义一个标志，当滚轮向下滚时，执行一些操作
-
-  down = e.wheelDelta ? e.wheelDelta < 0 : e.detail > 0;
-
-  if (down) {
-    $globalMain.removeClass('in').addClass('out');
-  } else {
-    $globalMain.removeClass('out').addClass('in');
   }
 
-  if (e.preventDefault) {
-    /*FF 和 Chrome*/
-    e.preventDefault(); // 阻止默认事件
-  }
-
-  return false;
+  return '/';
 }
 
-addEvent(body, 'mousewheel', onMouseWheel);
-addEvent(body, 'DOMMouseScroll', onMouseWheel);
-
-function addEvent(obj, xEvent, fn) {
-  if (obj.attachEvent) {
-    obj.attachEvent('on' + xEvent, fn);
-  } else {
-    obj.addEventListener(xEvent, fn, {
-      passive: false
-    });
-  }
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
 }
-},{}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/bundle-url.js"}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -310,7 +212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "11371" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "13487" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -486,5 +388,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js","main.js"], null)
-//# sourceMappingURL=/main.1f19ae8e.js.map
+},{}]},{},["C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/x.js.map
