@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"main.js":[function(require,module,exports) {
+})({"epB2":[function(require,module,exports) {
 var $siteList = $('.siteList');
 var $lastLi = $siteList.find('li.last');
 var storage = localStorage.getItem('storage');
@@ -129,7 +129,6 @@ var $smallBox = $(".smallBox");
 var $form = $('.searchForm');
 var $globalMain = $('.globalMain');
 var body = document.getElementsByTagName('body')[0];
-console.log(body);
 var hashMap = storageObject || [{
   logo: 'a',
   url: "https://www.acfun.cn"
@@ -156,7 +155,6 @@ var render = function render() {
 render();
 $('.addButton').on('click', function () {
   var url = prompt('请问你要添加我网址是啥');
-  console.log(url);
 
   if (url === '') {
     alert("请输入正确的网站");
@@ -165,7 +163,6 @@ $('.addButton').on('click', function () {
     url = 'https://' + url;
   }
 
-  console.log(url);
   hashMap.push({
     logo: simplifyUrl(url)[0],
     url: url
@@ -180,7 +177,6 @@ window.onbeforeunload = function () {
 
 $(document).on('keypress', function (e) {
   var key = e.key;
-  console.log(key);
   hashMap.forEach(function (node) {
     if (node.logo === key) {
       window.open(node.url);
@@ -190,9 +186,17 @@ $(document).on('keypress', function (e) {
 
 $input.on('keypress', function (e) {
   e.stopPropagation();
-}); // 切换搜索引擎
+}); // 电脑端搜索框显示默认语句
+
+var isTouchDevice = 'ontouchstart' in document.documentElement;
+
+if (isTouchDevice === false) {
+  $input.attr('placeholder', "在搜索框内按tab，可以换搜索引擎哟");
+} // 切换搜索引擎
+
 
 $(document).ready(function () {
+  var index = localStorage.getItem('searchBox') || 0;
   var searchTypes = [{
     name: 'wd',
     action: 'https://www.baidu.com/s',
@@ -223,12 +227,39 @@ $(document).ready(function () {
     $bigBox.animate({
       height: $smallBox.height() * $smallBox.length
     }, 300);
-  }); // 箭头函数没this，被坑了好久
+  }); // 显示搜索引擎
 
-  $smallBox.click(function fn() {
-    $form.attr("action", searchTypes[$(this).index()].action);
-    $input.attr('name', searchTypes[$(this).index()].name);
-    $choiceBtn.find('img').attr('src', searchTypes[$(this).index()].img);
+  var searchBox = function searchBox(index) {
+    $form.attr("action", searchTypes[index].action);
+    $input.attr('name', searchTypes[index].name);
+    $choiceBtn.find('img').attr('src', searchTypes[index].img);
+  }; // 初始化搜索引擎，是上一次的选择
+
+
+  searchBox(index); // 可以用e.currentTarget 遍历bigBox的子元素，看谁被触发了事件
+  // Tab键切换搜索引擎
+
+  $input.on('keydown', function (e) {
+    if (e.key === 'tab' || e.keyCode === 9) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (index < searchTypes.length - 1) {
+        index++;
+      } else {
+        index = 0;
+      }
+
+      localStorage.setItem('searchBox', index);
+      searchBox(index);
+    }
+  }); // 点击bigBox 切换搜索引擎
+
+  $bigBox.on('click', 'div', function (e) {
+    var $box = $(e.currentTarget);
+    index = $box.index();
+    localStorage.setItem('searchBox', index);
+    searchBox(index);
     $bigBox.animate({
       height: 0
     }, 300, function () {
@@ -282,209 +313,5 @@ function addEvent(obj, xEvent, fn) {
     });
   }
 }
-},{}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
-var OVERLAY_ID = '__parcel__error__overlay__';
-var OldModule = module.bundle.Module;
-
-function Module(moduleName) {
-  OldModule.call(this, moduleName);
-  this.hot = {
-    data: module.bundle.hotData,
-    _acceptCallbacks: [],
-    _disposeCallbacks: [],
-    accept: function (fn) {
-      this._acceptCallbacks.push(fn || function () {});
-    },
-    dispose: function (fn) {
-      this._disposeCallbacks.push(fn);
-    }
-  };
-  module.bundle.hotData = null;
-}
-
-module.bundle.Module = Module;
-var checkedAssets, assetsToAccept;
-var parent = module.bundle.parent;
-
-if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
-  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "11371" + '/');
-
-  ws.onmessage = function (event) {
-    checkedAssets = {};
-    assetsToAccept = [];
-    var data = JSON.parse(event.data);
-
-    if (data.type === 'update') {
-      var handled = false;
-      data.assets.forEach(function (asset) {
-        if (!asset.isNew) {
-          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
-
-          if (didAccept) {
-            handled = true;
-          }
-        }
-      }); // Enable HMR for CSS by default.
-
-      handled = handled || data.assets.every(function (asset) {
-        return asset.type === 'css' && asset.generated.js;
-      });
-
-      if (handled) {
-        console.clear();
-        data.assets.forEach(function (asset) {
-          hmrApply(global.parcelRequire, asset);
-        });
-        assetsToAccept.forEach(function (v) {
-          hmrAcceptRun(v[0], v[1]);
-        });
-      } else if (location.reload) {
-        // `location` global exists in a web worker context but lacks `.reload()` function.
-        location.reload();
-      }
-    }
-
-    if (data.type === 'reload') {
-      ws.close();
-
-      ws.onclose = function () {
-        location.reload();
-      };
-    }
-
-    if (data.type === 'error-resolved') {
-      console.log('[parcel] ✨ Error resolved');
-      removeErrorOverlay();
-    }
-
-    if (data.type === 'error') {
-      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
-      removeErrorOverlay();
-      var overlay = createErrorOverlay(data);
-      document.body.appendChild(overlay);
-    }
-  };
-}
-
-function removeErrorOverlay() {
-  var overlay = document.getElementById(OVERLAY_ID);
-
-  if (overlay) {
-    overlay.remove();
-  }
-}
-
-function createErrorOverlay(data) {
-  var overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID; // html encode message and stack trace
-
-  var message = document.createElement('div');
-  var stackTrace = document.createElement('pre');
-  message.innerText = data.error.message;
-  stackTrace.innerText = data.error.stack;
-  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
-  return overlay;
-}
-
-function getParents(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return [];
-  }
-
-  var parents = [];
-  var k, d, dep;
-
-  for (k in modules) {
-    for (d in modules[k][1]) {
-      dep = modules[k][1][d];
-
-      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
-        parents.push(k);
-      }
-    }
-  }
-
-  if (bundle.parent) {
-    parents = parents.concat(getParents(bundle.parent, id));
-  }
-
-  return parents;
-}
-
-function hmrApply(bundle, asset) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (modules[asset.id] || !bundle.parent) {
-    var fn = new Function('require', 'module', 'exports', asset.generated.js);
-    asset.isNew = !modules[asset.id];
-    modules[asset.id] = [fn, asset.deps];
-  } else if (bundle.parent) {
-    hmrApply(bundle.parent, asset);
-  }
-}
-
-function hmrAcceptCheck(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (!modules[id] && bundle.parent) {
-    return hmrAcceptCheck(bundle.parent, id);
-  }
-
-  if (checkedAssets[id]) {
-    return;
-  }
-
-  checkedAssets[id] = true;
-  var cached = bundle.cache[id];
-  assetsToAccept.push([bundle, id]);
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    return true;
-  }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAcceptCheck(global.parcelRequire, id);
-  });
-}
-
-function hmrAcceptRun(bundle, id) {
-  var cached = bundle.cache[id];
-  bundle.hotData = {};
-
-  if (cached) {
-    cached.hot.data = bundle.hotData;
-  }
-
-  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
-    cached.hot._disposeCallbacks.forEach(function (cb) {
-      cb(bundle.hotData);
-    });
-  }
-
-  delete bundle.cache[id];
-  bundle(id);
-  cached = bundle.cache[id];
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    cached.hot._acceptCallbacks.forEach(function (cb) {
-      cb();
-    });
-
-    return true;
-  }
-}
-},{}]},{},["C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel/src/builtins/hmr-runtime.js","main.js"], null)
-//# sourceMappingURL=/main.1f19ae8e.js.map
+},{}]},{},["epB2"], null)
+//# sourceMappingURL=main.ba88bffa.js.map
